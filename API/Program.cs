@@ -9,8 +9,15 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-var app = builder.Build();
+builder.Services.AddCors();
 
+var app = builder.Build();
+app.UseCors(options =>
+{
+    options.AllowAnyHeader()
+           .AllowAnyMethod()
+           .WithOrigins("http://localhost:3000", "https://localhost:3000");
+});
 app.MapControllers();
 var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
