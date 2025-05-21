@@ -1,12 +1,19 @@
 import React from 'react'  
 import { Card, CardActions, CardContent, CardMedia,Button,Typography } from '@mui/material'
+import { useActivities } from '../../../lib/hooks/useActivities'
 
-type Props = {activity: Activity, 
+type Props = {
+  selectedActivity: Activity, 
   cancelSelectActivity: () => void
   openForm: (id?: string) => void
 }
 
-function ActivityDetail({activity,cancelSelectActivity,openForm}:Props) { //Created using RFCE snippet
+function ActivityDetail({selectedActivity,cancelSelectActivity,openForm}:Props) { //Created using RFCE snippet
+  const {activities} = useActivities();
+  const activity = activities?.find((x) => x.id === selectedActivity.id);
+
+  if(!activity) return <Typography>Loading...</Typography>
+  
   return (
     <Card sx={{borderradius: 3}}>
         <CardMedia component='img' src={`/images/categoryImages/${activity.category}.jpg`} />
