@@ -1,40 +1,46 @@
 import { Paper, Typography,Box ,Button,TextField} from '@mui/material'
 import { FormEvent } from 'react'
 import { useActivities } from '../../../lib/hooks/useActivities'
+import { useNavigate, useParams } from 'react-router';
 
+function ActivityForm() {
+  const {id} = useParams();
+  const {updateActivity, createActivity, activity, isLoadingActivity} = useActivities(id);
+  const navigate = useNavigate();
 
-type Props = {
-  closeForm: () => void  
-  activity?: Activity
-}
-
-function ActivityForm({closeForm,activity}: Props) {
-  const {updateActivity, createActivity} = useActivities();
-  
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault(); 
-    const formData  = new FormData(event.currentTarget);
-    const data: { [key: string]: FormDataEntryValue } = {};
-    formData.forEach((value, key) => {
-      data[key] = value;
-    }); 
-    
-    if (activity) {
-      data.id = activity.id;
-      await updateActivity.mutateAsync(data as unknown as Activity);
-      closeForm();
-    } else {
-      await createActivity.mutateAsync(data as unknown as Activity);
-      closeForm();
-    }
-    //console.log(data);
-    //submitForm(data as unknown as Activity);
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => 
+  {
+      event.preventDefault(); 
+      const formData  = new FormData(event.currentTarget);
+      const data: { [key: string]: FormDataEntryValue } = {};
+      formData.forEach((value, key) => {
+        data[key] = value;
+      }); 
+      
+      if (activity) {
+        data.id = activity.id;
+        await updateActivity.mutateAsync(data as unknown as Activity);
+        navigate(`/activities/${activity.id}`);
+      
+      } else {
+        await createActivity.mutate(data as unknown as Activity, {
+          onSuccess: (id) => {
+            console.log('Returned ID:', id);
+                        navigate(`/activities/${id}`)
+                    }     
+          });
+      
+      }
+      //console.log(data);
+      //submitForm(data as unknown as Activity);
   }
+
+  if (isLoadingActivity) return <Typography>Loading activity...</Typography>;
 
   return (
     <Paper>
         <Typography variant="h5" gutterBottom color="primary">
-            Create activity
+            {activity ? 'Edit Activity' : 'Create Activity'}
         </Typography>
         <Box component='form' onSubmit={handleSubmit} display='flex' flexDirection='column' gap={3}>
            <TextField name='title' label='Title' defaultValue={activity ? activity.title : ''} /> 
@@ -49,7 +55,7 @@ function ActivityForm({closeForm,activity}: Props) {
            <TextField name='city' label='City' defaultValue={activity ? activity.city : ''} /> 
            <TextField name='venue' label='Venue' defaultValue={activity ? activity.venue : ''}/> 
            <Box display='flex' justifyContent='end' gap={3}>
-                <Button color='inherit' onClick={closeForm}>Cancel</Button>
+                <Button color='inherit'>Cancel</Button>
                 <Button type="submit" variant='contained' color='success' disabled={updateActivity.isPending}>Submit</Button>
            </Box>
         </Box>
