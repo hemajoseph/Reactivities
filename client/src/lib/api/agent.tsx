@@ -59,6 +59,11 @@ agent.interceptors.response.use(
         //console.log(data);
         router.navigate('/server-error', {state: {error: data}});
         break;
+      case 405: 
+        console.log(data);
+        toast.error('405-Method Not Allowed');
+        router.navigate('/server-error', {state: {error: data}});
+        break;
       default:
         toast.error('Something else');
         break;
