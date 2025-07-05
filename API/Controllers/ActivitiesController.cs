@@ -7,12 +7,14 @@ using MediatR;
 using Application.Activities.Queries;
 using Application.Activities.Commnds;
 using Application.Activities.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
 
     public class ActivitiesController() : BaseApiController  //primnary ctor
     {
+
         [HttpGet]
         public async Task<ActionResult<List<Activity>>> GetActivities(CancellationToken ct)
         {
@@ -23,7 +25,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Activity>> GetActivityDetail(string id)
         {
-             //var activity = await context.Activities.FindAsync(id);
+            //var activity = await context.Activities.FindAsync(id);
             return HandleResult(await Mediator.Send(new GetActivityDetails.Query { Id = id }));
 
         }
