@@ -40,6 +40,15 @@ builder.Services.AddIdentityApiEndpoints<User>(
 ).AddRoles<IdentityRole>()
   .AddEntityFrameworkStores<AppDbContext>();
 
+//Adding this based on ChatGpt as cookie is not being passed from react
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // ⬅️ Important for HTTPS
+    options.Cookie.SameSite = SameSiteMode.None;              // ⬅️ Required for cross-origin
+    options.Cookie.Name = "App.AuthCookie";                  // Optional, for clarity
+});
+
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionMiddleware>();

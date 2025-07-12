@@ -38,6 +38,13 @@ export type Address {
   country_code: string
 }
 
+type User = {
+  id: string
+  displayName: string
+  email: string
+  imageUrl?: string
+}
+
 
 
   

@@ -4,7 +4,9 @@ import { toast } from 'react-toastify';
 import { router } from '../../app/router/Routes';
 
 const agent = axios.create({
-  baseURL: import.meta.env.VITE_API_URL});
+  baseURL: import.meta.env.VITE_API_URL,
+  withCredentials: true, // for cookies
+});
 
 const sleep = (delay: number) => {
   return new Promise((resolve) => {
